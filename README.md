@@ -37,18 +37,14 @@ generate_commits.bat 5 2
 
 ## How It Works
 
-1. **File Creation/Modification**: The script creates or modifies text files (progress.txt, notes.md, changelog.txt, etc.)
+1. **Single File Modification**: The script modifies only one file (`activity_log.txt`) by appending timestamped activity entries
 2. **Git Operations**: Each file change is staged and committed with a random, meaningful commit message
-3. **Push Option**: After generating commits, you'll be prompted to push to your remote repository
+3. **Auto Push**: Automatically pushes all commits to your remote repository without asking
 
-## Files Created
+## File Created
 
-The script will create and modify these files:
-- `progress.txt` - Project progress tracker
-- `notes.md` - Development notes
-- `changelog.txt` - Project changelog  
-- `tasks.txt` - Task list
-- `dev_log.md` - Development log
+The script creates and modifies only one file:
+- `activity_log.txt` - Activity log with timestamped entries for each commit
 
 ## Requirements
 
@@ -77,9 +73,7 @@ Generating 5 commits...
 ✓ Committed: Update dependencies
 
 Completed: 5/5 commits generated
-
-Push commits to remote repository? (y/n): y
-Pushing to remote...
+Automatically pushing to remote...
 ✓ Successfully pushed to remote!
 ```
 

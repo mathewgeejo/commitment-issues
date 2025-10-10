@@ -38,13 +38,8 @@ class CommitGenerator:
             "Merge branch updates"
         ]
         
-        self.file_contents = {
-            "progress.txt": "Project progress tracker\n",
-            "notes.md": "# Project Notes\n\nThis file contains development notes.\n",
-            "changelog.txt": "# Changelog\n\n",
-            "tasks.txt": "# Task List\n\n",
-            "dev_log.md": "# Development Log\n\n"
-        }
+        self.target_file = "activity_log.txt"
+        self.base_content = "# Activity Log\n\nThis file tracks project activity and changes.\n\n"
 
     def run_git_command(self, command):
         """Execute a git command and return the result."""
@@ -75,41 +70,48 @@ class CommitGenerator:
             print("Warning: No remote repository configured.")
             print("Add a remote with: git remote add origin <your-repo-url>")
 
-    def create_or_modify_file(self, filename):
-        """Create or modify a file to make a meaningful change."""
-        filepath = self.repo_path / filename
+    def modify_activity_file(self):
+        """Modify the single activity log file."""
+        filepath = self.repo_path / self.target_file
         
-        if filepath.exists():
-            # Modify existing file
-            with open(filepath, 'r') as f:
-                content = f.read()
-            
-            # Add a new line with timestamp
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            new_line = f"- Update at {timestamp}\n"
-            
-            with open(filepath, 'a') as f:
-                f.write(new_line)
-        else:
-            # Create new file
-            content = self.file_contents.get(filename, f"# {filename}\n\nGenerated file.\n")
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            content += f"\nCreated at: {timestamp}\n"
-            
+        if not filepath.exists():
+            # Create the file for the first time
             with open(filepath, 'w') as f:
-                f.write(content)
+                f.write(self.base_content)
+        
+        # Add a new entry with timestamp and random activity
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        activities = [
+            "Code optimization performed",
+            "Documentation updated", 
+            "Bug fix implemented",
+            "Feature enhancement added",
+            "Security improvement made",
+            "Performance tuning completed",
+            "Code refactoring done",
+            "Unit tests updated",
+            "Configuration adjusted",
+            "Dependencies reviewed",
+            "Error handling improved",
+            "Logging functionality enhanced",
+            "Code cleanup performed",
+            "Algorithm optimization",
+            "User interface improved"
+        ]
+        
+        activity = random.choice(activities)
+        new_entry = f"[{timestamp}] {activity}\n"
+        
+        with open(filepath, 'a') as f:
+            f.write(new_entry)
 
     def make_commit(self, message=None):
         """Make a single commit."""
-        # Choose a random file to modify
-        files_to_modify = list(self.file_contents.keys())
-        chosen_file = random.choice(files_to_modify)
-        
-        # Modify the file
-        self.create_or_modify_file(chosen_file)
+        # Modify the single activity file
+        self.modify_activity_file()
         
         # Add to git
-        self.run_git_command(f"git add {chosen_file}")
+        self.run_git_command(f"git add {self.target_file}")
         
         # Commit with message
         if not message:
@@ -142,15 +144,15 @@ class CommitGenerator:
         
         print(f"\nCompleted: {successful_commits}/{count} commits generated")
         
-        # Ask if user wants to push to remote
-        push = input("\nPush commits to remote repository? (y/n): ").lower().strip()
-        if push == 'y':
-            print("Pushing to remote...")
+        # Automatically push to remote
+        if successful_commits > 0:
+            print("Automatically pushing to remote...")
             result = self.run_git_command("git push")
             if result is not None:
                 print("✓ Successfully pushed to remote!")
             else:
                 print("✗ Failed to push. Make sure you have a remote configured.")
+                print("You can manually push later with: git push")
 
 def main():
     parser = argparse.ArgumentParser(description="Generate GitHub commits for profile activity")
