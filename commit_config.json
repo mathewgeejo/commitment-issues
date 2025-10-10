@@ -1,9 +1,16 @@
 {
   "min_commits": 15,
   "max_commits": 25,
-  "min_delay_minutes": 5,
-  "max_delay_minutes": 45,
+  "min_delay_minutes": 1,
+  "max_delay_minutes": 1,
   "work_hours_start": 9,
   "work_hours_end": 18,
-  "enable_random_timing": true
+  "enable_random_timing": false,
+  "custom_messages": [
+    "Fix typo in documentation",
+    "Update README formatting",
+    "Refactor code structure",
+    "Add error handling",
+    "Improve performance"
+  ]
 }

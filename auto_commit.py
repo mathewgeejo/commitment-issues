@@ -19,8 +19,8 @@ class AutoCommitGenerator:
         self.config_file = self.repo_path / config_file
         self.load_config()
         
-        # Expanded realistic commit messages
-        self.commit_messages = [
+        # Default commit messages
+        default_messages = [
             "Fix typo in documentation",
             "Update README formatting", 
             "Refactor code structure",
@@ -72,6 +72,12 @@ class AutoCommitGenerator:
             "Add graceful shutdown",
             "Fix character encoding issue"
         ]
+        
+        # Use custom messages if available, otherwise use defaults
+        if "custom_messages" in self.config and self.config["custom_messages"]:
+            self.commit_messages = self.config["custom_messages"] + default_messages
+        else:
+            self.commit_messages = default_messages
         
         self.target_file = "activity_log.txt"
         self.base_content = "# Daily Activity Log\n\nThis file tracks automated daily development activity.\n\n"
@@ -189,11 +195,11 @@ class AutoCommitGenerator:
         
         if result is not None:
             timestamp = datetime.datetime.now().strftime("%H:%M:%S")
-            print(f"[{timestamp}] ✓ Committed: {message}")
+            print(f"[{timestamp}] Committed: {message}")
             return True
         else:
             timestamp = datetime.datetime.now().strftime("%H:%M:%S")
-            print(f"[{timestamp}] ✗ Failed to commit: {message}")
+            print(f"[{timestamp}] Failed to commit: {message}")
             return False
 
     def generate_commit_times(self, num_commits):
@@ -238,9 +244,9 @@ class AutoCommitGenerator:
         # Generate random number of commits for today
         num_commits = random.randint(self.config["min_commits"], self.config["max_commits"])
         
-        print(f"🚀 Starting daily commit generation...")
-        print(f"📊 Target commits for today: {num_commits}")
-        print(f"⏰ Started at: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"Starting daily commit generation...")
+        print(f"Target commits for today: {num_commits}")
+        print(f"Started at: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         
         successful_commits = 0
         commit_times = self.generate_commit_times(num_commits)
@@ -251,27 +257,35 @@ class AutoCommitGenerator:
             
             # Add realistic delay between commits (except for the last one)
             if i < len(commit_times) - 1:
-                delay = random.randint(
-                    self.config["min_delay_minutes"] * 60,  # Convert to seconds
-                    self.config["max_delay_minutes"] * 60
-                )
-                next_commit_time = datetime.datetime.now() + datetime.timedelta(seconds=delay)
-                print(f"⏳ Next commit in {delay//60} minutes at {next_commit_time.strftime('%H:%M:%S')}")
-                time.sleep(delay)
+                min_delay = self.config["min_delay_minutes"] * 60  # Convert to seconds
+                max_delay = self.config["max_delay_minutes"] * 60
+                
+                # Check if no delay is set (both min and max are 0)
+                if min_delay == 0 and max_delay == 0:
+                    delay = 0
+                else:
+                    delay = random.randint(min_delay, max_delay) if max_delay > 0 else 0
+                
+                if delay > 0:
+                    next_commit_time = datetime.datetime.now() + datetime.timedelta(seconds=delay)
+                    print(f"Next commit in {delay//60} minutes at {next_commit_time.strftime('%H:%M:%S')}")
+                    time.sleep(delay)
+                else:
+                    print("No delay - continuing immediately...")
         
-        print(f"\n📈 Daily Summary:")
-        print(f"✅ Completed: {successful_commits}/{num_commits} commits")
-        print(f"⏰ Finished at: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"\nDaily Summary:")
+        print(f"Completed: {successful_commits}/{num_commits} commits")
+        print(f"Finished at: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         
         # Auto push to remote
         if successful_commits > 0:
-            print("🔄 Pushing to remote repository...")
+            print("Pushing to remote repository...")
             result = self.run_git_command("git push")
             if result is not None:
-                print("✅ Successfully pushed to remote!")
+                print("Successfully pushed to remote!")
                 return True
             else:
-                print("❌ Failed to push. Check your remote configuration.")
+                print("Failed to push. Check your remote configuration.")
                 return False
         
         return successful_commits > 0
@@ -284,7 +298,7 @@ def main():
         generator.config["max_commits"] = 5
         generator.config["min_delay_minutes"] = 0
         generator.config["max_delay_minutes"] = 1
-        print("🧪 Running in test mode...")
+        print("Running in test mode...")
         generator.run_daily_commits()
     else:
         # Normal daily mode

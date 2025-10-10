@@ -14,8 +14,28 @@ An automated Python system to maintain consistent GitHub commit activity on your
 
 ## 🚀 Quick Start
 
-### 1. Manual Usage (One-time commits)
+### 1. GUI Control Panel (Easiest)
 
+```cmd
+# Launch the GUI control panel
+launch_gui.bat
+
+# Or directly:
+python commit_gui.py
+```
+
+**GUI Features:**
+- 🎛️ Adjust commit counts (min/max per day)
+- ⏰ Set timing delays between commits  
+- 🕘 Configure work hours
+- 💬 Add custom commit messages
+- 🧪 Test automation with one click
+- 🤖 Setup daily automation
+- 📊 Generate manual commits
+
+### 2. Command Line Usage
+
+#### Manual Commits:
 ```bash
 # Generate 20 commits immediately
 python commit_generator.py 20
@@ -24,29 +44,18 @@ python commit_generator.py 20
 python commit_generator.py 15 --delay 2
 ```
 
-### 2. Automated Daily Commits (Recommended)
-
-#### Windows Setup:
+#### Automated Daily Commits:
 ```cmd
-# Test the automation (generates 3-5 commits quickly)
+# Windows: Test automation
 test_automation.bat
 
-# Set up daily automation at 6 AM (Run as Administrator)
+# Windows: Set up daily automation (Run as Administrator)
 setup_scheduler.bat
 
-# Or manually run daily commits
-python auto_commit.py
-```
-
-#### Linux/macOS Setup:
-```bash
-# Test the automation
-python auto_commit.py --test
-
-# Set up daily cron job at 6 AM
+# Linux/macOS: Set up daily cron job
 ./setup_cron.sh
 
-# Or manually run daily commits  
+# Manual daily run
 python auto_commit.py
 ```
 
@@ -75,8 +84,8 @@ Customize behavior by editing `commit_config.json`:
 {
   "min_commits": 15,           // Minimum commits per day
   "max_commits": 25,           // Maximum commits per day  
-  "min_delay_minutes": 5,      // Min delay between commits
-  "max_delay_minutes": 45,     // Max delay between commits
+  "min_delay_minutes": 5,      // Min delay between commits (0 for no delay)
+  "max_delay_minutes": 45,     // Max delay between commits (0 for no delay)
   "work_hours_start": 9,       // Work day start (24hr format)
   "work_hours_end": 18,        // Work day end (24hr format)  
   "enable_random_timing": true // Realistic timing distribution
@@ -139,6 +148,8 @@ Completed: 10/10 commits generated
 
 ```
 commitment-issues/
+├── commit_gui.py            # 🎛️ GUI Control Panel
+├── launch_gui.bat          # 🚀 Launch GUI (Windows)
 ├── auto_commit.py           # 🤖 Main automation script
 ├── commit_generator.py      # 📝 Manual commit generator  
 ├── commit_config.json       # ⚙️ Configuration file
