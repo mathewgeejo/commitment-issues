@@ -1,0 +1,9 @@
+{
+  "min_commits": 15,
+  "max_commits": 25,
+  "min_delay_minutes": 5,
+  "max_delay_minutes": 45,
+  "work_hours_start": 9,
+  "work_hours_end": 18,
+  "enable_random_timing": true
+}
